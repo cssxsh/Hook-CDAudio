@@ -18,4 +18,4 @@ add_compile_options(/GS-)
 add_compile_options(/Zc:sizedDealloc-)
 add_library(winmm SHARED library.cpp)
 
-install(TARGETS winmm RUNTIME)
+install(TARGETS winmm DESTINATION ".")

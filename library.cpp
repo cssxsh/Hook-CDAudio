@@ -14,10 +14,6 @@ LPWAVEHDR pwh = nullptr;
 
 WaveOutFunctionTable* table = nullptr;
 
-MCIERROR (WINAPI *pfnMciSendCommand)(MCIDEVICEID mciId, UINT uMsg, DWORD dwParam1, DWORD dwParam2) = nullptr;
-
-BOOL (WINAPI *pfnMciGetErrorStringA)(MCIERROR mcierr, LPSTR pszText, UINT cchText) = nullptr;
-
 void CALLBACK WaveOutDone(HWAVEOUT hwo, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 
 BOOL WINAPI DllMain(HINSTANCE /*hInstance*/, DWORD dwReason, LPVOID /*lpReserved*/)
@@ -43,10 +39,6 @@ BOOL WINAPI DllMain(HINSTANCE /*hInstance*/, DWORD dwReason, LPVOID /*lpReserved
             IMPLEMENT_WARP(winmm, mixerGetNumDevs)
             IMPLEMENT_WARP(winmm, mixerSetControlDetails)
             IMPLEMENT_WARP(winmm, timeGetTime)
-            pfnMciGetErrorStringA = reinterpret_cast<BOOL (WINAPI *)(MCIERROR, LPSTR, UINT)>(GetProcAddress(
-                winmm, "mciGetErrorStringA"));
-            pfnMciSendCommand = reinterpret_cast<MCIERROR (WINAPI *)(MCIDEVICEID, UINT, DWORD, DWORD)>(
-                winmm_mciSendCommandA);
             winmm_mciSendCommandA = mciSendCommandHook;
             winmm_mciSendStringA = mciSendStringHook;
             table = new WaveOutFunctionTable(winmm);

@@ -1,10 +1,6 @@
 #ifndef HOOK_H
 #define HOOK_H
 
-#ifdef _DETOURS_H_
-#pragma comment(lib, "detours.lib")
-#endif // _DETOURS_H_
-
 typedef UINT (WINAPI *WaveOutGetNumDevs)();
 
 typedef MMRESULT (WINAPI *WaveOutGetDevCapsA)(UINT, LPWAVEOUTCAPSA, UINT);
