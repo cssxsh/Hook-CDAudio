@@ -27,18 +27,18 @@ BOOL WINAPI DllMain(HINSTANCE /*hInstance*/, DWORD dwReason, LPVOID /*lpReserved
             lstrcat(path, TEXT("\\winmm.dll"));
             winmm = LoadLibrary(path);
             if (winmm == nullptr) return FALSE;
-            IMPLEMENT_WARP(winmm, PlaySoundA)
-            IMPLEMENT_WARP(winmm, mciSendCommandA)
-            IMPLEMENT_WARP(winmm, mciSendStringA)
-            IMPLEMENT_WARP(winmm, mixerOpen)
-            IMPLEMENT_WARP(winmm, mixerClose)
-            IMPLEMENT_WARP(winmm, mixerGetControlDetailsA)
-            IMPLEMENT_WARP(winmm, mixerGetDevCapsA)
-            IMPLEMENT_WARP(winmm, mixerGetLineControlsA)
-            IMPLEMENT_WARP(winmm, mixerGetLineInfoA)
-            IMPLEMENT_WARP(winmm, mixerGetNumDevs)
-            IMPLEMENT_WARP(winmm, mixerSetControlDetails)
-            IMPLEMENT_WARP(winmm, timeGetTime)
+            IMPLEMENT_PROXY(winmm, PlaySoundA)
+            IMPLEMENT_PROXY(winmm, mciSendCommandA)
+            IMPLEMENT_PROXY(winmm, mciSendStringA)
+            IMPLEMENT_PROXY(winmm, mixerOpen)
+            IMPLEMENT_PROXY(winmm, mixerClose)
+            IMPLEMENT_PROXY(winmm, mixerGetControlDetailsA)
+            IMPLEMENT_PROXY(winmm, mixerGetDevCapsA)
+            IMPLEMENT_PROXY(winmm, mixerGetLineControlsA)
+            IMPLEMENT_PROXY(winmm, mixerGetLineInfoA)
+            IMPLEMENT_PROXY(winmm, mixerGetNumDevs)
+            IMPLEMENT_PROXY(winmm, mixerSetControlDetails)
+            IMPLEMENT_PROXY(winmm, timeGetTime)
             winmm_mciSendCommandA = mciSendCommandHook;
             winmm_mciSendStringA = mciSendStringHook;
             table = new WaveOutFunctionTable(winmm);

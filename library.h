@@ -70,26 +70,26 @@ struct WaveOutFunctionTable
     explicit WaveOutFunctionTable(HMODULE winmm);
 };
 
-#define DECLARE_WARP(module, function) \
+#define DECLARE_PROXY(module, function) \
     PVOID module##_##function; \
     __declspec(naked) void WINAPIV _jmp_##module##_##function##(void) { __asm { jmp module##_##function } } \
     __pragma(comment(linker, "/EXPORT:" #function "=?_jmp_" #module "_" #function "@@YAXXZ"))
     
-#define IMPLEMENT_WARP(module, function) \
+#define IMPLEMENT_PROXY(module, function) \
     module##_##function = GetProcAddress(module, #function);
 
-DECLARE_WARP(winmm, PlaySoundA)
-DECLARE_WARP(winmm, mciSendCommandA)
-DECLARE_WARP(winmm, mciSendStringA)
-DECLARE_WARP(winmm, mixerOpen)
-DECLARE_WARP(winmm, mixerClose)
-DECLARE_WARP(winmm, mixerGetControlDetailsA)
-DECLARE_WARP(winmm, mixerGetDevCapsA)
-DECLARE_WARP(winmm, mixerGetLineControlsA)
-DECLARE_WARP(winmm, mixerGetLineInfoA)
-DECLARE_WARP(winmm, mixerGetNumDevs)
-DECLARE_WARP(winmm, mixerSetControlDetails)
-DECLARE_WARP(winmm, timeGetTime)
+DECLARE_PROXY(winmm, PlaySoundA)
+DECLARE_PROXY(winmm, mciSendCommandA)
+DECLARE_PROXY(winmm, mciSendStringA)
+DECLARE_PROXY(winmm, mixerOpen)
+DECLARE_PROXY(winmm, mixerClose)
+DECLARE_PROXY(winmm, mixerGetControlDetailsA)
+DECLARE_PROXY(winmm, mixerGetDevCapsA)
+DECLARE_PROXY(winmm, mixerGetLineControlsA)
+DECLARE_PROXY(winmm, mixerGetLineInfoA)
+DECLARE_PROXY(winmm, mixerGetNumDevs)
+DECLARE_PROXY(winmm, mixerSetControlDetails)
+DECLARE_PROXY(winmm, timeGetTime)
 
 extern "C" __declspec(dllexport) BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved);
 
