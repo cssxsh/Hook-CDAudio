@@ -1,15 +1,21 @@
-#ifndef HOOK_H
-#define HOOK_H
+#ifndef WAVE_H
+#define WAVE_H
+
+#include <windows.h>
 
 typedef UINT (WINAPI *WaveOutGetNumDevs)();
 
 typedef MMRESULT (WINAPI *WaveOutGetDevCapsA)(UINT, LPWAVEOUTCAPSA, UINT);
+
+typedef MMRESULT (WINAPI *WaveOutGetDevCapsW)(UINT, LPWAVEOUTCAPSW, UINT);
 
 typedef MMRESULT (WINAPI *WaveOutGetVolume)(HWAVEOUT, LPDWORD);
 
 typedef MMRESULT (WINAPI *WaveOutSetVolume)(HWAVEOUT, DWORD);
 
 typedef MMRESULT (WINAPI *WaveOutGetErrorTextA)(MMRESULT, LPSTR, UINT);
+
+typedef MMRESULT (WINAPI *WaveOutGetErrorTextW)(MMRESULT, LPWSTR, UINT);
 
 typedef MMRESULT (WINAPI *WaveOutOpen)(LPHWAVEOUT, UINT, LPCWAVEFORMATEX, DWORD, DWORD, DWORD);
 
@@ -47,9 +53,11 @@ struct WaveOutFunctionTable
 {
     WaveOutGetNumDevs GetNumDevs;
     WaveOutGetDevCapsA GetDevCapsA;
+    WaveOutGetDevCapsW GetDevCapsW;
     WaveOutGetVolume GetVolume;
     WaveOutSetVolume SetVolume;
-    WaveOutGetErrorTextA GetErrorText;
+    WaveOutGetErrorTextA GetErrorTextA;
+    WaveOutGetErrorTextW GetErrorTextW;
     WaveOutOpen Open;
     WaveOutClose Close;
     WaveOutPrepareHeader PrepareHeader;
@@ -66,35 +74,15 @@ struct WaveOutFunctionTable
     WaveOutSetPlaybackRate SetPlaybackRate;
     WaveOutGetID GetID;
     WaveOutMessage Message;
+#ifdef UNICODE
+    WaveOutGetDevCapsW GetDevCaps;
+    WaveOutGetErrorTextW GetErrorText;
+#else
+    WaveOutGetDevCapsA GetDevCaps;
+    WaveOutGetErrorTextA GetErrorText;
+#endif // !UNICODE
 
     explicit WaveOutFunctionTable(HMODULE winmm);
 };
 
-#define DECLARE_PROXY(module, function) \
-    PVOID module##_##function; \
-    __declspec(naked) void WINAPIV _jmp_##module##_##function##(void) { __asm { jmp module##_##function } } \
-    __pragma(comment(linker, "/EXPORT:" #function "=?_jmp_" #module "_" #function "@@YAXXZ"))
-    
-#define IMPLEMENT_PROXY(module, function) \
-    module##_##function = GetProcAddress(module, #function);
-
-DECLARE_PROXY(winmm, PlaySoundA)
-DECLARE_PROXY(winmm, mciSendCommandA)
-DECLARE_PROXY(winmm, mciSendStringA)
-DECLARE_PROXY(winmm, mixerOpen)
-DECLARE_PROXY(winmm, mixerClose)
-DECLARE_PROXY(winmm, mixerGetControlDetailsA)
-DECLARE_PROXY(winmm, mixerGetDevCapsA)
-DECLARE_PROXY(winmm, mixerGetLineControlsA)
-DECLARE_PROXY(winmm, mixerGetLineInfoA)
-DECLARE_PROXY(winmm, mixerGetNumDevs)
-DECLARE_PROXY(winmm, mixerSetControlDetails)
-DECLARE_PROXY(winmm, timeGetTime)
-
-extern "C" __declspec(dllexport) BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved);
-
-MCIERROR WINAPI mciSendCommandHook(MCIDEVICEID mciId, UINT uMsg, DWORD dwParam1, DWORD dwParam2);
-
-MCIERROR WINAPI mciSendStringHook(LPCSTR lpszCommand, LPTSTR lpszReturnString, UINT cchReturn, HANDLE hwndCallback);
-
-#endif // HOOK_H
+#endif // WAVE_H
